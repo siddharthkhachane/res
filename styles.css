@@ -1,0 +1,234 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.content {
+    padding: 40px;
+}
+
+.form_group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.05em;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.button_group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+button {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: white;
+}
+
+.btn_generate {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.btn_generate:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn_pdf {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    display: none;
+}
+
+.btn_pdf:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
+}
+
+.btn_word {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    display: none;
+}
+
+.btn_word:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+}
+
+.btn_latex {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    display: none;
+}
+
+.btn_latex:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.result_section {
+    display: none;
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.result_section.active {
+    display: block;
+}
+
+.result_section h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.result_content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert.active {
+    display: block;
+}
+
+.alert_error {
+    background: #fee;
+    color: #c33;
+    border: 1px solid #fcc;
+}
+
+.alert_success {
+    background: #efe;
+    color: #3c3;
+    border: 1px solid #cfc;
+}
+
+.info_box {
+    background: #e8f4f8;
+    border-left: 4px solid #667eea;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+}
+
+.info_box p {
+    margin: 5px 0;
+    color: #555;
+}
