@@ -1,174 +1,19 @@
-const ORIGINAL_RESUME = String.raw`\documentclass[letterpaper,10.5pt]{article}
- 
-\usepackage{latexsym}
-\usepackage[empty]{fullpage}
-\usepackage{titlesec}
-\usepackage{marvosym}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{verbatim}
-\usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{fancyhdr}
-\usepackage[english]{babel}
-\usepackage{tabularx}
-\usepackage{geometry}
- 
-\geometry{margin=0.5in, top=0.45in, bottom=0.45in}
- 
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot{}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
- 
-\urlstyle{same}
- 
-\raggedbottom
-\raggedright
-\setlength{\tabcolsep}{0in}
- 
-\titleformat{\section}{
-  \vspace{-6pt}\scshape\raggedright\large\bfseries
-}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
- 
-\newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
-}
- 
-\newcommand{\resumeSubheading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & \textbf{#2} \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-6pt}
-}
- 
-\newcommand{\resumeSubheadingWithGPA}[5]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & \textbf{#2} \\
-      \textit{\small#3} & \textit{\small #4} \\
-      \textbf{\small#5} & \\
-    \end{tabular*}\vspace{-6pt}
-}
- 
-\newcommand{\resumeProjectHeading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & #2 \\
-    \end{tabular*}\vspace{-6pt}
-}
- 
-\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
- 
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
-\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.15in]\vspace{-4pt}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
- 
-\begin{document}
- 
-\begin{center}
-    \textbf{\Huge \scshape Siddharth Samir Khachane} \\ \vspace{2pt}
-    \small Los Angeles $|$ +1 (213) 512 8004 $|$ \href{mailto:khachane@usc.edu}{\underline{khachane@usc.edu}} $|$ \href{https://www.linkedin.com/in/siddharth-khachane1/}{\underline{Linkedin}} $|$ \href{https://github.com/siddharthkhachane}{\underline{Github}} $|$ \href{https://siddharthkhachane.github.io/portfolio}{\underline{Portfolio}}
-\end{center}
- 
-\section{EDUCATION}
-  \resumeSubHeadingListStart
-    \resumeSubheadingWithGPA
-      {University of Southern California}{Aug 2024 to May 2026}
-      {Master of Science, Computer Science}{Los Angeles, CA, USA}
-      {$\bullet$GPA: 3.86/4}
-  \resumeSubHeadingListEnd
- 
-\section{PROFESSIONAL EXPERIENCE}
-  \resumeSubHeadingListStart
- 
-    \resumeSubheading
-      {Feather App, Inc}{Sep 2025 to Present}
-      {Technical Intern, Software Engineering}{Los Angeles, CA, USA}
-      \resumeItemListStart
-        \resumeItem{Implemented \textbf{AI agents} that analyze relationship data to deliver actionable nudges, resulting in a \textbf{50\% increase} in user engagement through insights from emails and calendar events, driving a substantial rise in timely user actions}
-        \resumeItem{Designed a fully automated \textbf{ETL pipeline} based on \textbf{medallion architecture} that unified and contextualized Google Calendar and email data, utilizing \textbf{BullMQ} for job orchestration and reducing deduplication by streamlining data processing workflows}
-      \resumeItemListEnd
-      
-    \resumeSubheading
-      {NumisToken, Inc}{May 2025 to Aug 2025}
-      {Full Stack Summer Intern}{Los Angeles, CA, USA}
-      \resumeItemListStart
-        \resumeItem{Developed a high performance \textbf{NFT marketplace} platform using \textbf{Java, Spring Boot, PostgreSQL} and \textbf{MyBatis} backend with \textbf{React} frontend, enabling trading, listing, and delivery functionalities}
-        \resumeItem{Optimized database concurrency and scalability by implementing \textbf{optimistic locking} to resolve concurrent request conflicts, reducing transaction conflicts by \textbf{40\%} for \textbf{10,000+ concurrent users}}
-      \resumeItemListEnd
- 
-    \resumeSubheading
-      {Ultimate Kronos Group (UKG)}{Jan 2024 to Jul 2024}
-      {Senior Software Engineer}{Noida, India}
-      \resumeItemListStart
-        \resumeItem{Engineered a \textbf{Messaging Framework in UKG DIMENSIONS} utilizing \textbf{RabbitMQ, Java} and \textbf{Spring Boot}, facilitating smooth asynchronous communication between microservices}
-        \resumeItem{Developed a \textbf{Resiliency Framework} to automate message persistence in adverse scenarios, reducing recovery time and efforts by \textbf{80\%} compared to previous manual processes}
-      \resumeItemListEnd
- 
-    \resumeSubheading
-      {Ultimate Kronos Group (UKG)}{Jul 2022 to Jan 2024}
-      {Software Engineer}{Noida, India}
-      \resumeItemListStart
-        \resumeItem{Established a \textbf{Common Messaging Platform in UKG PRO} utilizing \textbf{Kafka}, \textbf{Java} and \textbf{Python} to create a scalable and secure communication method between microservices in the HRM application, aligning with microservices architecture best practices}
-        \resumeItem{Implemented advanced security measures including encryption, compression, and digital signatures to safeguard data flow between interconnected services}
-        \resumeItem{Designed and deployed unified monitoring dashboards on \textbf{Grafana} to automate production observability, reducing manual oversight time by \textbf{50\%} and enhancing system reliability in alignment with best practices for observability systems}
-      \resumeItemListEnd
- 
-  \resumeSubHeadingListEnd
- 
-\section{PROJECTS}
-    \resumeSubHeadingListStart
-      \resumeProjectHeading
-          {\textbf{Word Slayer} $|$ \href{https://word-slayer-kappa.vercel.app}{\underline{Live Demo}}}{}
-          \resumeItemListStart
-            \resumeItem{Developed an \textbf{online multiplayer typing game} where players battle in real time by typing words to defeat enemies}
-            \resumeItem{Implemented \textbf{real time pub/sub architecture} for instant synchronization of player actions and combat states}
-            \resumeItem{Built \textbf{dynamic combat mechanics} with visual feedback and live opponent tracking across multiple difficulties}
-          \resumeItemListEnd
-          
-      \resumeProjectHeading
-          {\textbf{Collab Canvas} $|$ \href{https://collab-canvas-topaz.vercel.app}{\underline{Live Demo}}}{}
-          \resumeItemListStart
-            \resumeItem{Created a \textbf{real time collaborative whiteboard} application in \textbf{React, Node.js, Socket.io, and MongoDB}}
-            \resumeItem{Incorporated features including multi user drawing synchronization, storing persistent canvas states MongoDB}
-            \resumeItem{Deployed \textbf{full stack application} on \textbf{Vercel and Render} enabling seamless collaboration across devices}
-          \resumeItemListEnd
-          
-      \resumeProjectHeading
-          {\textbf{CodeOptimizer AI} $|$ \href{https://github.com/siddharthkhachane/CodeOptimizer}{\underline{Github}}}{}
-          \resumeItemListStart
-            \resumeItem{Created an \textbf{AI powered code assistant} which provides optimizations that are contextually aware to codebases}
-            \resumeItem{Used \textbf{Retrieval Augmented Generation (RAG)} with vector store and embeddings to retrieve relevant code}
-            \resumeItem{Built a UI with \textbf{Markdown} output and \textbf{real time chat interface} powered by local \textbf{LLMs}}
-          \resumeItemListEnd
-    \resumeSubHeadingListEnd
- 
-\section{SKILLS}
- \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item{
-     \textbf{Programming Languages}{: Java, Python, JavaScript, TypeScript, HTML, CSS, SQL, Node} \\
-     \textbf{Frameworks}{: Spring Boot, React, Next.js, Express.js, Pytorch, Agile, Distributed Systems, Backend, Front end} \\
-     \textbf{Technologies}{: Kafka, RabbitMQ, Docker, Kubernetes, AWS, Grafana, GCP, REST, Git, CI/CD, Microservices} \\
-     \textbf{Data Management}{: MySQL, PostgreSQL, MongoDB, Redis, Neo4j, Data Structures}
-    }}
- \end{itemize}
- 
-\section{CERTIFICATION}
- \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item{
-     \textbf{AWS (Amazon Web Services) Developer Associate}{: July 2024} \\
-     \textbf{AWS (Amazon Web Services) Cloud Practitioner}{: July 2024}
-    }}
- \end{itemize}
- 
-\end{document}`;
-
+let ORIGINAL_RESUME = '';
 let tailoredResume = '';
+
+async function loadOriginalResume() {
+    try {
+        const response = await fetch('original_resume.tex');
+        if (!response.ok) {
+            throw new Error('Could not load original resume file');
+        }
+        ORIGINAL_RESUME = await response.text();
+    } catch (error) {
+        showAlert('Error loading original resume: ' + error.message, 'error');
+    }
+}
+
+loadOriginalResume();
 
 document.getElementById('resumeForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -179,6 +24,11 @@ document.getElementById('resumeForm').addEventListener('submit', async (e) => {
 
     if (!apiKey || !jobTitle || !jobDescription) {
         showAlert('Please fill in all fields', 'error');
+        return;
+    }
+
+    if (!ORIGINAL_RESUME) {
+        showAlert('Original resume not loaded yet. Please wait a moment and try again.', 'error');
         return;
     }
 
@@ -303,7 +153,7 @@ document.getElementById('downloadWord').addEventListener('click', async () => {
     }
 
     try {
-        const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, UnderlineType, TabStopType, TabStopPosition } = docx;
+        const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
 
         const sections = parseLatexToDocx(tailoredResume);
 
@@ -366,7 +216,7 @@ function parseLatexToDocx(latex) {
     for (let i = 0; i < sectionMatches.length; i++) {
         const sectionTitle = sectionMatches[i][1];
         const sectionStart = sectionMatches[i].index + sectionMatches[i][0].length;
-        const sectionEnd = i < sectionMatches.length  1 ? sectionMatches[i + 1].index : latex.length;
+        const sectionEnd = i < sectionMatches.length - 1 ? sectionMatches[i + 1].index : latex.length;
         const sectionContent = latex.substring(sectionStart, sectionEnd);
 
         sections.push(
@@ -399,7 +249,7 @@ function parseLatexToDocx(latex) {
         const subheadings = sectionContent.match(/\\resumeSubheading\{([^}]+)\}\{([^}]+)\}\{([^}]+)\}\{([^}]+)\}/g);
         if (subheadings) {
             subheadings.forEach(subheading => {
-                const parts = subheading.match(/\{([^}]+)\}/g).map(p => p.slice(1, 1));
+                const parts = subheading.match(/\{([^}]+)\}/g).map(p => p.slice(1, -1));
                 sections.push(
                     new Paragraph({
                         children: [
