@@ -130,17 +130,25 @@ document.getElementById('downloadPdf').addEventListener('click', async () => {
     showLoading(true);
 
     try {
-        const response = await fetch('https://latexonline.cc/compile?text=' + encodeURIComponent(tailoredResume));
+        // Use Overleaf API compatible service
+        const formData = new FormData();
+        formData.append('filecontents[]', tailoredResume);
+        formData.append('filename[]', 'resume.tex');
+        
+        const response = await fetch('https://texlive.net/cgi-bin/latexcgi', {
+            method: 'POST',
+            body: formData
+        });
         
         if (!response.ok) {
-            throw new Error('LaTeX compilation failed');
+            throw new Error('LaTeX compilation failed. Please download the .tex file and compile it locally using Overleaf or your LaTeX editor.');
         }
 
         const blob = await response.blob();
         saveAs(blob, 'Siddharth_Samir_Khachane_Resume_new.pdf');
         showAlert('PDF downloaded successfully!', 'success');
     } catch (error) {
-        showAlert(`Error generating PDF: ${error.message}. Try downloading the LaTeX file and compile it locally.`, 'error');
+        showAlert(`${error.message}`, 'error');
     } finally {
         showLoading(false);
     }
