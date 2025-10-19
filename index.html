@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Tailorer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: none;
+        }
+
+        .btn-pdf:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
+        }
+
+        .btn-word {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: none;
+        }
+
+        .btn-word:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .result-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.active {
+            display: block;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Resume Tailorer</h1>
+            <p>Customize your resume with AI to match any job description</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <p><strong>How it works:</strong></p>
+                <p>1. Enter your OpenAI API key (your key is never stored)</p>
+                <p>2. Paste the job title/role and description</p>
+                <p>3. Click "Generate Tailored Resume"</p>
+                <p>4. Download as Word or PDF</p>
+            </div>
+
+            <div id="alertBox" class="alert"></div>
+
+            <form id="resumeForm">
+                <div class="form-group">
+                    <label for="apiKey">OpenAI API Key *</label>
+                    <input type="password" id="apiKey" placeholder="sk-..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="jobTitle">Job Title / Role *</label>
+                    <input type="text" id="jobTitle" placeholder="e.g., Senior Full Stack Engineer" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="jobDescription">Job Description *</label>
+                    <textarea id="jobDescription" placeholder="Paste the full job description here..." required></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-generate" id="generateBtn">
+                        🚀 Generate Tailored Resume
+                    </button>
+                    <button type="button" class="btn-word" id="downloadWord">
+                        📄 Download Word
+                    </button>
+                    <button type="button" class="btn-pdf" id="downloadPdf">
+                        📕 Download PDF
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>AI is tailoring your resume... This may take 30-60 seconds</p>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <h3>✅ Tailored Resume (LaTeX)</h3>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ORIGINAL_RESUME = String.raw`\documentclass[letterpaper,10.5pt]{article}
+ 
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{geometry}
+ 
+\geometry{margin=0.5in, top=0.45in, bottom=0.45in}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+ 
+\urlstyle{same}
+ 
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+ 
+\titleformat{\section}{
+  \vspace{-6pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+ 
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+ 
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{#2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-6pt}
+}
+ 
+\newcommand{\resumeSubheadingWithGPA}[5]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{#2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+      \textbf{\small#5} & \\
+    \end{tabular*}\vspace{-6pt}
+}
+ 
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-6pt}
+}
+ 
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+ 
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.15in]\vspace{-4pt}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+ 
+\begin{document}
+ 
+\begin{center}
+    \textbf{\Huge \scshape Siddharth Samir Khachane} \\ \vspace{2pt}
+    \small Los Angeles $|$ +1 (213) 512 8004 $|$ \href{mailto:khachane@usc.edu}{\underline{khachane@usc.edu}} $|$ \href{https://www.linkedin.com/in/siddharth-khachane1/}{\underline{Linkedin}} $|$ \href{https://github.com/siddharthkhachane}{\underline{Github}} $|$ \href{https://siddharthkhachane.github.io/portfolio}{\underline{Portfolio}}
+\end{center}
+ 
+\section{EDUCATION}
+  \resumeSubHeadingListStart
+    \resumeSubheadingWithGPA
+      {University of Southern California}{Aug 2024 to May 2026}
+      {Master of Science, Computer Science}{Los Angeles, CA, USA}
+      {$\bullet$GPA: 3.86/4}
+  \resumeSubHeadingListEnd
+ 
+\section{PROFESSIONAL EXPERIENCE}
+  \resumeSubHeadingListStart
+ 
+    \resumeSubheading
+      {Feather App, Inc}{Sep 2025 to Present}
+      {Technical Intern, Software Engineering}{Los Angeles, CA, USA}
+      \resumeItemListStart
+        \resumeItem{Implemented \textbf{AI agents} that analyze relationship data to deliver actionable nudges, resulting in a \textbf{50\% increase} in user engagement through insights from emails and calendar events, driving a substantial rise in timely user actions}
+        \resumeItem{Designed a fully automated \textbf{ETL pipeline} based on \textbf{medallion architecture} that unified and contextualized Google Calendar and email data, utilizing \textbf{BullMQ} for job orchestration and reducing deduplication by streamlining data processing workflows}
+      \resumeItemListEnd
+      
+    \resumeSubheading
+      {NumisToken, Inc}{May 2025 to Aug 2025}
+      {Full Stack Summer Intern}{Los Angeles, CA, USA}
+      \resumeItemListStart
+        \resumeItem{Developed a high performance \textbf{NFT marketplace} platform using \textbf{Java, Spring Boot, PostgreSQL} and \textbf{MyBatis} backend with \textbf{React} frontend, enabling trading, listing, and delivery functionalities}
+        \resumeItem{Optimized database concurrency and scalability by implementing \textbf{optimistic locking} to resolve concurrent request conflicts, reducing transaction conflicts by \textbf{40\%} for \textbf{10,000+ concurrent users}}
+      \resumeItemListEnd
+ 
+    \resumeSubheading
+      {Ultimate Kronos Group (UKG)}{Jan 2024 to Jul 2024}
+      {Senior Software Engineer}{Noida, India}
+      \resumeItemListStart
+        \resumeItem{Engineered a \textbf{Messaging Framework in UKG DIMENSIONS} utilizing \textbf{RabbitMQ, Java} and \textbf{Spring Boot}, facilitating smooth asynchronous communication between microservices}
+        \resumeItem{Developed a \textbf{Resiliency Framework} to automate message persistence in adverse scenarios, reducing recovery time and efforts by \textbf{80\%} compared to previous manual processes}
+      \resumeItemListEnd
+ 
+    \resumeSubheading
+      {Ultimate Kronos Group (UKG)}{Jul 2022 to Jan 2024}
+      {Software Engineer}{Noida, India}
+      \resumeItemListStart
+        \resumeItem{Established a \textbf{Common Messaging Platform in UKG PRO} utilizing \textbf{Kafka}, \textbf{Java} and \textbf{Python} to create a scalable and secure communication method between microservices in the HRM application, aligning with microservices architecture best practices}
+        \resumeItem{Implemented advanced security measures including encryption, compression, and digital signatures to safeguard data flow between interconnected services}
+        \resumeItem{Designed and deployed unified monitoring dashboards on \textbf{Grafana} to automate production observability, reducing manual oversight time by \textbf{50\%} and enhancing system reliability in alignment with best practices for observability systems}
+      \resumeItemListEnd
+ 
+  \resumeSubHeadingListEnd
+ 
+\section{PROJECTS}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Word Slayer} $|$ \href{https://word-slayer-kappa.vercel.app}{\underline{Live Demo}}}{}
+          \resumeItemListStart
+            \resumeItem{Developed an \textbf{online multiplayer typing game} where players battle in real time by typing words to defeat enemies}
+            \resumeItem{Implemented \textbf{real time pub/sub architecture} for instant synchronization of player actions and combat states}
+            \resumeItem{Built \textbf{dynamic combat mechanics} with visual feedback and live opponent tracking across multiple difficulties}
+          \resumeItemListEnd
+          
+      \resumeProjectHeading
+          {\textbf{Collab Canvas} $|$ \href{https://collab-canvas-topaz.vercel.app}{\underline{Live Demo}}}{}
+          \resumeItemListStart
+            \resumeItem{Created a \textbf{real time collaborative whiteboard} application in \textbf{React, Node.js, Socket.io, and MongoDB}}
+            \resumeItem{Incorporated features including multi user drawing synchronization, storing persistent canvas states MongoDB}
+            \resumeItem{Deployed \textbf{full stack application} on \textbf{Vercel and Render} enabling seamless collaboration across devices}
+          \resumeItemListEnd
+          
+      \resumeProjectHeading
+          {\textbf{CodeOptimizer AI} $|$ \href{https://github.com/siddharthkhachane/CodeOptimizer}{\underline{Github}}}{}
+          \resumeItemListStart
+            \resumeItem{Created an \textbf{AI powered code assistant} which provides optimizations that are contextually aware to codebases}
+            \resumeItem{Used \textbf{Retrieval Augmented Generation (RAG)} with vector store and embeddings to retrieve relevant code}
+            \resumeItem{Built a UI with \textbf{Markdown} output and \textbf{real time chat interface} powered by local \textbf{LLMs}}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+ 
+\section{SKILLS}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Programming Languages}{: Java, Python, JavaScript, TypeScript, HTML, CSS, SQL, Node} \\
+     \textbf{Frameworks}{: Spring Boot, React, Next.js, Express.js, Pytorch, Agile, Distributed Systems, Backend, Front end} \\
+     \textbf{Technologies}{: Kafka, RabbitMQ, Docker, Kubernetes, AWS, Grafana, GCP, REST, Git, CI/CD, Microservices} \\
+     \textbf{Data Management}{: MySQL, PostgreSQL, MongoDB, Redis, Neo4j, Data Structures}
+    }}
+ \end{itemize}
+ 
+\section{CERTIFICATION}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{AWS (Amazon Web Services) Developer Associate}{: July 2024} \\
+     \textbf{AWS (Amazon Web Services) Cloud Practitioner}{: July 2024}
+    }}
+ \end{itemize}
+ 
+\end{document}`;
+
+        let tailoredResume = '';
+
+        document.getElementById('resumeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const jobTitle = document.getElementById('jobTitle').value.trim();
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+
+            if (!apiKey || !jobTitle || !jobDescription) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+
+            showLoading(true);
+            hideAlert();
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('downloadWord').style.display = 'none';
+            document.getElementById('downloadPdf').style.display = 'none';
+
+            try {
+                tailoredResume = await tailorResume(apiKey, jobTitle, jobDescription);
+                document.getElementById('resultContent').textContent = tailoredResume;
+                document.getElementById('resultSection').classList.add('active');
+                document.getElementById('downloadWord').style.display = 'block';
+                document.getElementById('downloadPdf').style.display = 'block';
+                showAlert('Resume tailored successfully! You can now download it.', 'success');
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        async function tailorResume(apiKey, jobTitle, jobDescription) {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: `You are an expert resume writer specializing in ATS optimization. Your task is to tailor a LaTeX resume to match a job description by:
+
+1. Analyzing the job description for key technical skills, frameworks, methodologies, and buzzwords
+2. Intelligently integrating these keywords into the existing resume content where they naturally fit
+3. Adding relevant keywords to the SKILLS section if not already present
+4. Modifying bullet points in PROFESSIONAL EXPERIENCE and PROJECTS to incorporate job specific terminology
+5. Ensuring the LaTeX syntax remains perfect and compilable
+6. Maintaining the original structure, formatting, and all custom LaTeX commands
+7. NOT inventing fake experience, only enhancing existing content with relevant keywords
+8. Keeping the resume truthful while optimizing for ATS systems
+
+Return ONLY the complete modified LaTeX code, nothing else. Do not use markdown code blocks or any explanations.`
+                        },
+                        {
+                            role: 'user',
+                            content: `Job Title: ${jobTitle}
+
+Job Description:
+${jobDescription}
+
+Original Resume (LaTeX):
+${ORIGINAL_RESUME}
+
+Please tailor this resume to match the job description by intelligently adding relevant keywords while maintaining truthfulness and LaTeX formatting.`
+                        }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 4000
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'Failed to generate tailored resume');
+            }
+
+            const data = await response.json();
+            let tailoredContent = data.choices[0].message.content.trim();
+
+            // Remove markdown code blocks if present
+            tailoredContent = tailoredContent.replace(/```latex\n?/g, '').replace(/```\n?/g, '');
+
+            return tailoredContent;
+        }
+
+        document.getElementById('downloadWord').addEventListener('click', async () => {
+            if (!tailoredResume) {
+                showAlert('Please generate a tailored resume first', 'error');
+                return;
+            }
+
+            try {
+                const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, UnderlineType } = docx;
+
+                // Parse LaTeX to plain text sections
+                const sections = parseLatexToSections(tailoredResume);
+
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: sections
+                    }]
+                });
+
+                const blob = await docx.Packer.toBlob(doc);
+                saveAs(blob, 'Siddharth_Samir_Khachane_Resume_new.docx');
+                showAlert('Word document downloaded successfully!', 'success');
+            } catch (error) {
+                showAlert(`Error generating Word document: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('downloadPdf').addEventListener('click', async () => {
+            if (!tailoredResume) {
+                showAlert('Please generate a tailored resume first', 'error');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Parse LaTeX to plain text
+                const plainText = parseLatexToPlainText(tailoredResume);
+                
+                // Add content to PDF
+                const lines = doc.splitTextToSize(plainText, 180);
+                let y = 20;
+                const lineHeight = 7;
+                const pageHeight = doc.internal.pageSize.height;
+
+                doc.setFontSize(10);
+
+                for (let i = 0; i < lines.length; i++) {
+                    if (y > pageHeight - 20) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(lines[i], 15, y);
+                    y += lineHeight;
+                }
+
+                doc.save('Siddharth_Samir_Khachane_Resume_new.pdf');
+                showAlert('PDF downloaded successfully!', 'success');
+            } catch (error) {
+                showAlert(`Error generating PDF: ${error.message}`, 'error');
+            }
+        });
+
+        function parseLatexToPlainText(latex) {
+            let text = latex;
+
+            // Remove LaTeX preamble
+            text = text.replace(/\\documentclass[\s\S]*?\\begin{document}/g, '');
+            text = text.replace(/\\end{document}/g, '');
+
+            // Remove comments
+            text = text.replace(/%.*$/gm, '');
+
+            // Handle sections
+            text = text.replace(/\\section\{([^}]+)\}/g, '\n\n$1\n');
+
+            // Remove common LaTeX commands but keep content
+            text = text.replace(/\\textbf\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\textit\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\underline\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\href\{[^}]+\}\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\url\{([^}]+)\}/g, '$1');
+
+            // Handle itemize and enumerate
+            text = text.replace(/\\begin\{itemize\}[\s\S]*?\\end\{itemize\}/g, (match) => {
+                return match.replace(/\\item\s*/g, '\n  • ');
+            });
+
+            text = text.replace(/\\resumeItem\{([^}]+)\}/g, '\n  • $1');
+
+            // Remove remaining LaTeX commands
+            text = text.replace(/\\[a-zA-Z]+(\[[^\]]*\])?(\{[^}]*\})?/g, '');
+            
+            // Clean up
+            text = text.replace(/\$[^$]*\$/g, ''); // Remove math mode
+            text = text.replace(/\{|\}/g, ''); // Remove braces
+            text = text.replace(/\n{3,}/g, '\n\n'); // Remove excessive newlines
+            text = text.trim();
+
+            return text;
+        }
+
+        function parseLatexToSections(latex) {
+            const { Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+            const sections = [];
+
+            // Extract name from header
+            const nameMatch = latex.match(/\\textbf\{\\Huge.*?Siddharth Samir Khachane\}/);
+            if (nameMatch) {
+                sections.push(
+                    new Paragraph({
+                        text: 'Siddharth Samir Khachane',
+                        heading: HeadingLevel.TITLE,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 200 }
+                    })
+                );
+            }
+
+            // Extract contact info
+            const contactMatch = latex.match(/Los Angeles.*?Portfolio\}\}/s);
+            if (contactMatch) {
+                sections.push(
+                    new Paragraph({
+                        text: 'Los Angeles | +1 (213) 512 8004 | khachane@usc.edu',
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 300 }
+                    })
+                );
+            }
+
+            // Parse sections
+            const sectionRegex = /\\section\{([^}]+)\}([\s\S]*?)(?=\\section\{|\\end\{document\})/g;
+            let match;
+
+            while ((match = sectionRegex.exec(latex)) !== null) {
+                const sectionTitle = match[1];
+                const sectionContent = match[2];
+
+                sections.push(
+                    new Paragraph({
+                        text: sectionTitle,
+                        heading: HeadingLevel.HEADING_1,
+                        spacing: { before: 200, after: 100 }
+                    })
+                );
+
+                // Parse items in section
+                const items = sectionContent.match(/\\resumeItem\{([^}]+)\}/g);
+                if (items) {
+                    items.forEach(item => {
+                        const text = item.replace(/\\resumeItem\{([^}]+)\}/, '$1')
+                            .replace(/\\textbf\{([^}]+)\}/g, '$1')
+                            .replace(/\\[a-zA-Z]+/g, '');
+                        
+                        sections.push(
+                            new Paragraph({
+                                text: `  • ${text}`,
+                                spacing: { after: 100 }
+                            })
+                        );
+                    });
+                } else {
+                    // Handle other content
+                    const cleanContent = sectionContent
+                        .replace(/\\[a-zA-Z]+(\[[^\]]*\])?(\{[^}]*\})?/g, '')
+                        .replace(/\{|\}/g, '')
+                        .trim();
+                    
+                    if (cleanContent) {
+                        sections.push(
+                            new Paragraph({
+                                text: cleanContent,
+                                spacing: { after: 100 }
+                            })
+                        );
+                    }
+                }
+            }
+
+            return sections;
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            if (show) {
+                loading.classList.add('active');
+                generateBtn.disabled = true;
+            } else {
+                loading.classList.remove('active');
+                generateBtn.disabled = false;
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} active`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('active');
+            }, 5000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
